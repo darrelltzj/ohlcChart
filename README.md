@@ -39,7 +39,7 @@ REACT_APP_AV_ACCESS_KEY=**********
 yarn
 ```
 
-6) Start the app by running yarn start. The app will start on localhost:3000
+6) Start the app by running yarn start. The app will start on http://localhost:3000/
 
 ```
 yarn start
