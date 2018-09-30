@@ -6,6 +6,9 @@ export const SiderMain = styled.nav`
 padding: 10px;
 position: sticky;
 position: -webkit-sticky;
+position: -moz-sticky;
+position: -ms-sticky;
+position: -o-sticky;
 background: #222;
 top: 0;
 `;

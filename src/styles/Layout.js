@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+// Loader Adapted from https://medium.com/techtrument/simple-css-loading-animation-bafe96a384ce
 export const Loader = styled.div`
 height: 100vh;
 width: 100vw;
@@ -40,6 +41,9 @@ overflow-y: scroll;
 @media (max-width: 576px) {
   width: 100%;
   height: 65vh;
+  @media (max-height: 768px) {
+    height: 50vh;
+  }
   @media (max-height: 360px) {
     height: 25vh;
     display: flex;
@@ -56,6 +60,10 @@ flex-direction: column;
 justify-content: space-between;
 @media (max-width: 576px) {
   height: 35vh;
+  justify-content: center;
+  @media (max-height: 768px) {
+    height: 50vh;
+  }
   @media (max-height: 360px) {
     height: 75vh;
   }

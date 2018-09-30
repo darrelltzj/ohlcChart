@@ -34,7 +34,7 @@ function OhlcChart(props) {
   }, {});
 
   return (
-    <svg viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} style={{ width: '100%', maxHeight: '70vh' }}>
+    <svg width="100%" height="70vh" viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}>
       <Axis />
       <XLabels
         dataDatesSorted={dataDatesSorted}
