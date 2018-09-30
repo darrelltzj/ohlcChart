@@ -1,7 +1,5 @@
 /* global window */
 import React, { Component } from 'react';
-import { LocaleProvider } from 'antd';
-import enUS from 'antd/lib/locale-provider/en_US';
 import stockData from './constants/stockData';
 import avTimeSeriesDailyApi from './utils/avTimeSeriesDailyApi';
 import OhlcChart from './components/ohlcChart/OhlcChart';
@@ -15,23 +13,29 @@ import {
   Footer,
 } from './styles/Layout';
 
+const symbolFilterTxt = window.localStorage.getItem('filterTxt') || '';
+
 const symbolIndexStorage = window.localStorage.getItem('symbolIndex');
 
 const symbolStorage = window.localStorage.getItem('symbol');
 
-console.log(symbolIndexStorage, symbolStorage);
+function filterStocks(filterTxt = '') {
+  return filterTxt ? Object.keys(stockData).filter(symbol => new RegExp(filterTxt, 'gi').test(symbol)) : Object.keys(stockData);
+}
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      stockSymbols: Object.keys(stockData), // filter
+      stockSymbols: filterStocks(symbolFilterTxt),
+      filterTxt: symbolFilterTxt || '',
       symbolIndex: symbolIndexStorage === undefined ? 5 : +symbolIndexStorage,
       symbol: symbolStorage || 'AAPL',
       loading: false,
       data: {},
       err: null,
     };
+    this.handleFilterStocks = this.handleFilterStocks.bind(this);
     this.viewPage = this.viewPage.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
     this.handleApiSearch = this.handleApiSearch.bind(this);
@@ -42,26 +46,36 @@ class App extends Component {
     this.handleApiSearch(symbol);
   }
 
+  async handleFilterStocks(filterTxt = '') {
+    try {
+      const stockSymbols = filterStocks(filterTxt);
+      await this.setState({ stockSymbols, filterTxt, symbolIndex: 0 });
+    } catch (err) {
+      this.setState({ err });
+    }
+  }
+
   viewPage(type) {
-    const { symbolIndex } = this.state;
+    const { stockSymbols, symbolIndex } = this.state;
     let nextIndex = symbolIndex;
     if (type === 'prev') {
       nextIndex = symbolIndex - 10 < 0 ? 0 : symbolIndex - 10;
     } else if (type === 'next') {
-      nextIndex = symbolIndex + 10 > Object.keys(stockData).length - 1
-        ? Object.keys(stockData).length - 1
+      nextIndex = symbolIndex + 10 > (stockSymbols.length - 1)
+        ? stockSymbols.length - 1
         : symbolIndex + 10;
     }
     this.setState({ symbolIndex: nextIndex });
   }
 
   async handleSelect(symbol) {
-    const { symbol: prevSymbol, symbolIndex } = this.state;
+    const { filterTxt, symbolIndex, symbol: prevSymbol } = this.state;
     try {
       await this.setState({ symbol });
       await this.handleApiSearch(symbol);
       await window.localStorage.setItem('symbol', symbol);
       await window.localStorage.setItem('symbolIndex', +symbolIndex);
+      await window.localStorage.setItem('filterTxt', filterTxt);
     } catch (err) {
       this.setState({ symbol: prevSymbol });
     }
@@ -106,6 +120,7 @@ class App extends Component {
   render() {
     const {
       stockSymbols,
+      filterTxt,
       symbolIndex,
       symbol,
       loading,
@@ -114,38 +129,37 @@ class App extends Component {
     } = this.state;
 
     return (
-      <LocaleProvider locale={enUS}>
-        <MainRow>
-          {loading && (
-          <Loader>
-            <span style={{ color: 'white' }}>Loading...</span>
-          </Loader>)}
-          <SiderContainer
-            stockData={stockData}
-            stockSymbols={stockSymbols}
-            symbolIndex={symbolIndex}
-            symbol={symbol}
-            viewPage={this.viewPage}
-            handleSelect={this.handleSelect}
-          />
-          <MainCol>
-            <Header>
-              <h1>{symbol}</h1>
-              <span>
-                {stockData[symbol].security}
-              </span>
-            </Header>
-            <Content>
-              {err ? <div>Error</div> : <OhlcChart data={data} />}
-            </Content>
-            <Footer>
-              <span>
-                Designed by DarrellTZJ
-              </span>
-            </Footer>
-          </MainCol>
-        </MainRow>
-      </LocaleProvider>
+      <MainRow>
+        {loading && (
+        <Loader>
+          <span style={{ color: 'white' }}>Loading...</span>
+        </Loader>)}
+        <SiderContainer
+          stockSymbols={stockSymbols}
+          filterTxt={filterTxt}
+          symbolIndex={symbolIndex}
+          symbol={symbol}
+          handleFilterStocks={this.handleFilterStocks}
+          viewPage={this.viewPage}
+          handleSelect={this.handleSelect}
+        />
+        <MainCol>
+          <Header>
+            <h1>{symbol}</h1>
+            <span>
+              {stockData[symbol].security}
+            </span>
+          </Header>
+          <Content>
+            {err ? <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><p>{err.message}</p></div> : <OhlcChart data={data} />}
+          </Content>
+          <Footer>
+            <span>
+              Designed by DarrellTZJ
+            </span>
+          </Footer>
+        </MainCol>
+      </MainRow>
     );
   }
 }

@@ -12,4 +12,11 @@ font-size: 14px;
   outline: none;
   border: 2px solid green;
 }
+@media (max-width: 576px) {
+  width: 100%;
+  @media (max-height: 360px) {
+    width: auto;
+    height: 20px;
+  }
+}
 `;

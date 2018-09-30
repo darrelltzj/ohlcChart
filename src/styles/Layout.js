@@ -33,7 +33,7 @@ overflow-x: hidden;
 overflow-y: scroll;
 @media (max-width: 576px) {
   width: 100%;
-  height: 70vh;
+  height: 65vh;
   @media (max-height: 360px) {
     height: 25vh;
     display: flex;
@@ -49,7 +49,7 @@ display: flex;
 flex-direction: column;
 justify-content: space-between;
 @media (max-width: 576px) {
-  height: 30vh;
+  height: 35vh;
   @media (max-height: 360px) {
     height: 75vh;
   }
@@ -60,6 +60,11 @@ export const Header = styled.header`
 padding: 10px 50px;
 @media (max-width: 576px) {
   display: none;
+}
+@media (max-height: 375px) {
+  & > h1 {
+    display: none;
+  }
 }
 `;
 
@@ -75,6 +80,9 @@ padding: 10px;
 text-align: center;
 color: #ccc;
 @media (max-width: 576px) {
+  display: none;
+}
+@media (max-height: 375px) {
   display: none;
 }
 `;

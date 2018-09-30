@@ -10,8 +10,10 @@ function SiderMainContainer(props) {
   const {
     // stockData,
     stockSymbols,
+    filterTxt,
     symbolIndex,
     symbol: selectedSymbol,
+    handleFilterStocks,
     viewPage,
     handleSelect,
   } = props;
@@ -19,7 +21,10 @@ function SiderMainContainer(props) {
   return (
     <Sider>
       <SiderMain>
-        <Input />
+        <Input
+          value={filterTxt}
+          onChange={e => handleFilterStocks(e.target.value)}
+        />
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -63,19 +68,21 @@ function SiderMainContainer(props) {
 }
 
 SiderMainContainer.propTypes = {
-  stockData: PropTypes.shape({}),
   stockSymbols: PropTypes.arrayOf(PropTypes.string),
+  filterTxt: PropTypes.string,
   symbolIndex: PropTypes.number,
   symbol: PropTypes.string,
+  handleFilterStocks: PropTypes.func,
   viewPage: PropTypes.func,
   handleSelect: PropTypes.func,
 };
 
 SiderMainContainer.defaultProps = {
-  stockData: {},
   stockSymbols: [],
+  filterTxt: '',
   symbolIndex: 5,
   symbol: 'AAPL',
+  handleFilterStocks: () => {},
   viewPage: () => {},
   handleSelect: () => {},
 };
