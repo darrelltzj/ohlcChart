@@ -97,12 +97,3 @@ text-decoration: none;
   display: none;
 }
 `;
-
-// & > h1 {
-//   display: none;
-// }
-// @media (max-width: 1600px) {}
-// @media (max-width: 1200px) {}
-// @media (max-width: 992px) {}
-// @media (max-width: 768px) {}
-// @media (max-width: 576px) {}
