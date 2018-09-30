@@ -1,6 +1,7 @@
 import axios from 'axios';
+import stockData from '../constants/stockData';
 
-export default function ({ symbol = 'AAPL' } = {}) {
+export function avTimeSeriesDailyApi({ symbol = 'AAPL' } = {}) {
   return axios({
     url: 'https://www.alphavantage.co/query',
     method: 'GET',
@@ -12,4 +13,8 @@ export default function ({ symbol = 'AAPL' } = {}) {
       apikey: process.env.REACT_APP_AV_ACCESS_KEY,
     },
   });
+}
+
+export function filterStocks(filterTxt = '') {
+  return filterTxt ? Object.keys(stockData).filter(symbol => new RegExp(filterTxt, 'gi').test(symbol)) : Object.keys(stockData);
 }

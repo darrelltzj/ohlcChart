@@ -1,11 +1,12 @@
 /* global window */
 import React, { Component } from 'react';
 import stockData from './constants/stockData';
-import avTimeSeriesDailyApi from './utils/avTimeSeriesDailyApi';
+import { avTimeSeriesDailyApi, filterStocks } from './utils/dataReq';
 import OhlcChart from './components/ohlcChart/OhlcChart';
 import SiderContainer from './components/sider/SiderContainer';
 import {
   Loader,
+  ErrContainer,
   MainRow,
   MainCol,
   Header,
@@ -18,10 +19,6 @@ const symbolFilterTxt = window.localStorage.getItem('filterTxt') || '';
 const symbolIndexStorage = window.localStorage.getItem('symbolIndex');
 
 const symbolStorage = window.localStorage.getItem('symbol');
-
-function filterStocks(filterTxt = '') {
-  return filterTxt ? Object.keys(stockData).filter(symbol => new RegExp(filterTxt, 'gi').test(symbol)) : Object.keys(stockData);
-}
 
 class App extends Component {
   constructor(props) {
@@ -96,23 +93,34 @@ class App extends Component {
       } else if (data['Error Message']) {
         await this.setState({
           loading: false,
-          err: { message: data['Error Message'] },
+          err: {
+            message: data['Error Message'],
+            alt: 'There was an error loading the data. Data for this stock ticker may not be available.',
+          },
         });
       } else if (data.Information) {
         await this.setState({
           loading: false,
-          err: { message: data.Information },
+          err: {
+            message: data.Information,
+            alt: 'High API traffic detected. Please try again later.',
+          },
         });
       } else {
         await this.setState({
           loading: false,
-          err: { message: 'API Error' },
+          err: {
+            message: 'There was an error loading the data.',
+          },
         });
       }
     } catch (err) {
       this.setState({
         loading: false,
-        err: { message: 'API Error' },
+        err: {
+          ...err,
+          alt: 'There was an error loading the data.',
+        },
       });
     }
   }
@@ -132,7 +140,7 @@ class App extends Component {
       <MainRow>
         {loading && (
         <Loader>
-          <span style={{ color: 'white' }}>Loading...</span>
+          <span>Loading...</span>
         </Loader>)}
         <SiderContainer
           stockSymbols={stockSymbols}
@@ -151,12 +159,19 @@ class App extends Component {
             </span>
           </Header>
           <Content>
-            {err ? <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><p>{err.message}</p></div> : <OhlcChart data={data} />}
+            {err ? (
+              <ErrContainer>
+                <p>
+                  {err.alt ? `${err.alt} ` : ''}
+                  Error Message:
+                  {' '}
+                  {err.message}
+                </p>
+              </ErrContainer>
+            ) : <OhlcChart data={data} />}
           </Content>
           <Footer>
-            <span>
-              Designed by DarrellTZJ
-            </span>
+            <a href="https://www.darrelltzj.com/" target="_blank" rel="noopener noreferrer">Designed by DarrellTZJ</a>
           </Footer>
         </MainCol>
       </MainRow>

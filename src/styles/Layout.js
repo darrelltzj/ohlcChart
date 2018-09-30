@@ -14,6 +14,12 @@ justify-content: center;
 align-items: center;
 `;
 
+export const ErrContainer = styled.div`
+display: flex;
+justify-content: center;
+align-items: center;
+`;
+
 export const MainRow = styled.main`
 width: 100%;
 display: flex;
@@ -79,6 +85,11 @@ export const Footer = styled.footer`
 padding: 10px;
 text-align: center;
 color: #ccc;
+text-decoration: none;
+& > a {
+  color: #ccc;
+  text-decoration: none;
+}
 @media (max-width: 576px) {
   display: none;
 }
