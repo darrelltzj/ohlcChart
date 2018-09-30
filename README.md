@@ -1,7 +1,7 @@
 # OHLC Chart
 
 ## Introduction
-A single page daily Open-high-low-close Chart app that displays data from https://www.alphavantage.co/
+A single page daily Open-high-low-close Chart app that displays data from https://www.alphavantage.co/. This app is also available at https://ohlc.darrelltzj.com/.
 
 ## Engines
 The app was developed with the following engines.
