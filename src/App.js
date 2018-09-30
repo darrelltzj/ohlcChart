@@ -1,3 +1,4 @@
+/* global window */
 import React, { Component } from 'react';
 import { LocaleProvider } from 'antd';
 import enUS from 'antd/lib/locale-provider/en_US';
@@ -6,6 +7,7 @@ import avTimeSeriesDailyApi from './utils/avTimeSeriesDailyApi';
 import OhlcChart from './components/ohlcChart/OhlcChart';
 import SiderContainer from './components/sider/SiderContainer';
 import {
+  Loader,
   MainRow,
   MainCol,
   Header,
@@ -13,36 +15,55 @@ import {
   Footer,
 } from './styles/Layout';
 
+const symbolIndexStorage = window.localStorage.getItem('symbolIndex');
+
+const symbolStorage = window.localStorage.getItem('symbol');
+
+console.log(symbolIndexStorage, symbolStorage);
+
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      symbol: 'AAPL',
+      stockSymbols: Object.keys(stockData), // filter
+      symbolIndex: symbolIndexStorage === undefined ? 5 : +symbolIndexStorage,
+      symbol: symbolStorage || 'AAPL',
       loading: false,
       data: {},
-      // err: null,
+      err: null,
     };
+    this.viewPage = this.viewPage.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
     this.handleApiSearch = this.handleApiSearch.bind(this);
   }
 
-  async componentDidMount() {
-    try {
-      const { symbol = 'AAPL' } = this.state;
+  componentDidMount() {
+    const { symbol = 'AAPL' } = this.state;
+    this.handleApiSearch(symbol);
+  }
 
-      this.handleApiSearch(symbol);
-    } catch (err) {
-      console.log('err', err.message);
-      // this.setState({ err });
+  viewPage(type) {
+    const { symbolIndex } = this.state;
+    let nextIndex = symbolIndex;
+    if (type === 'prev') {
+      nextIndex = symbolIndex - 10 < 0 ? 0 : symbolIndex - 10;
+    } else if (type === 'next') {
+      nextIndex = symbolIndex + 10 > Object.keys(stockData).length - 1
+        ? Object.keys(stockData).length - 1
+        : symbolIndex + 10;
     }
+    this.setState({ symbolIndex: nextIndex });
   }
 
   async handleSelect(symbol) {
+    const { symbol: prevSymbol, symbolIndex } = this.state;
     try {
-      await this.handleApiSearch(symbol);
       await this.setState({ symbol });
+      await this.handleApiSearch(symbol);
+      await window.localStorage.setItem('symbol', symbol);
+      await window.localStorage.setItem('symbolIndex', +symbolIndex);
     } catch (err) {
-      console.log('err', err.message);
+      this.setState({ symbol: prevSymbol });
     }
   }
 
@@ -54,43 +75,57 @@ class App extends Component {
 
       if (data['Time Series (Daily)']) {
         await this.setState({
-          data: data['Time Series (Daily)'],
           loading: false,
+          data: data['Time Series (Daily)'],
+          err: null,
         });
-      // } else if (data['Error Message']) {
-      //   await this.setState({
-      //     err: { message: data['Error Message'] },
-      //   });
-      // } else if (data['Information']) {
-      //   await this.setState({
-      //     err: { message: data['Information'] },
-      //   });
-      // } else {
-      //   await this.setState({
-      //     err: { message: 'API Error' },
-      //   });
+      } else if (data['Error Message']) {
+        await this.setState({
+          loading: false,
+          err: { message: data['Error Message'] },
+        });
+      } else if (data.Information) {
+        await this.setState({
+          loading: false,
+          err: { message: data.Information },
+        });
+      } else {
+        await this.setState({
+          loading: false,
+          err: { message: 'API Error' },
+        });
       }
-
-      console.log('data', data);
-
-      return data;
     } catch (err) {
-      console.log('err', err.message);
+      this.setState({
+        loading: false,
+        err: { message: 'API Error' },
+      });
     }
   }
 
   render() {
-    const { symbol, loading, data = {} } = this.state;
-
-    console.log('loading', loading);
+    const {
+      stockSymbols,
+      symbolIndex,
+      symbol,
+      loading,
+      data = {},
+      err = {},
+    } = this.state;
 
     return (
       <LocaleProvider locale={enUS}>
         <MainRow>
-          {loading && <div style={{ width: '100vw', height: '100vh', zIndex: 100, position: 'absolute' }}><p>Loading...</p></div>}
+          {loading && (
+          <Loader>
+            <span style={{ color: 'white' }}>Loading...</span>
+          </Loader>)}
           <SiderContainer
             stockData={stockData}
+            stockSymbols={stockSymbols}
+            symbolIndex={symbolIndex}
             symbol={symbol}
+            viewPage={this.viewPage}
             handleSelect={this.handleSelect}
           />
           <MainCol>
@@ -101,7 +136,7 @@ class App extends Component {
               </span>
             </Header>
             <Content>
-              <OhlcChart data={data} />
+              {err ? <div>Error</div> : <OhlcChart data={data} />}
             </Content>
             <Footer>
               <span>

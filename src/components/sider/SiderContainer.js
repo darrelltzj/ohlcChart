@@ -4,15 +4,52 @@ import { Sider } from '../../styles/Layout';
 import { SiderMain, SiderCard } from '../../styles/Sider';
 import Input from '../../styles/Form';
 
+const selectionSize = 10;
+
 function SiderMainContainer(props) {
-  const { stockData, symbol: selectedSymbol, handleSelect } = props;
+  const {
+    // stockData,
+    stockSymbols,
+    symbolIndex,
+    symbol: selectedSymbol,
+    viewPage,
+    handleSelect,
+  } = props;
 
   return (
     <Sider>
       <SiderMain>
         <Input />
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          color: '#fff',
+          width: '90%',
+        }}
+        >
+          <span
+            onClick={() => viewPage('prev')}
+            role="presentation"
+            style={{
+              cursor: 'pointer',
+              fontSize: 20,
+            }}
+          >
+            {'<'}
+          </span>
+          <span
+            onClick={() => viewPage('next')}
+            role="presentation"
+            style={{
+              cursor: 'pointer',
+              fontSize: 20,
+            }}
+          >
+            {'>'}
+          </span>
+        </div>
       </SiderMain>
-      {Object.keys(stockData).map(symbol => (
+      {stockSymbols.slice(symbolIndex, +selectionSize + +symbolIndex).map(symbol => (
         <SiderCard
           key={symbol}
           selected={selectedSymbol === symbol}
@@ -27,14 +64,20 @@ function SiderMainContainer(props) {
 
 SiderMainContainer.propTypes = {
   stockData: PropTypes.shape({}),
+  stockSymbols: PropTypes.arrayOf(PropTypes.string),
+  symbolIndex: PropTypes.number,
   symbol: PropTypes.string,
+  viewPage: PropTypes.func,
   handleSelect: PropTypes.func,
 };
 
 SiderMainContainer.defaultProps = {
   stockData: {},
+  stockSymbols: [],
+  symbolIndex: 5,
   symbol: 'AAPL',
-  handleSelect: e => e,
+  viewPage: () => {},
+  handleSelect: () => {},
 };
 
 export default SiderMainContainer;

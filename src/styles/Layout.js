@@ -1,5 +1,19 @@
 import styled from 'styled-components';
 
+export const Loader = styled.div`
+height: 100vh;
+width: 100vw;
+z-index: 1000;
+position: absolute;
+top: 0;
+left: 0;
+background-color: rgba(0,0,0,.7);
+color: white;
+display: flex;
+justify-content: center;
+align-items: center;
+`;
+
 export const MainRow = styled.main`
 width: 100%;
 display: flex;
