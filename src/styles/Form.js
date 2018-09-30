@@ -13,7 +13,7 @@ font-size: 14px;
   border: 2px solid green;
 }
 @media (max-width: 576px) {
-  width: 100%;
+  width: 80%;
   @media (max-height: 360px) {
     width: auto;
     height: 20px;

@@ -11,19 +11,39 @@ left: 0;
 background-color: rgba(0,0,0,.7);
 color: white;
 display: flex;
+display: -webkit-box;
+display: -moz-box;
+display: -ms-flexbox;
+display: -webkit-flex;
 justify-content: center;
 align-items: center;
+-webkit-box-align: center;
+-moz-box-align: center;
+-ms-flex-align: center;
+-webkit-align-items: center;
 `;
 
 export const ErrContainer = styled.div`
 display: flex;
+display: -webkit-box;
+display: -moz-box;
+display: -ms-flexbox;
+display: -webkit-flex;
 justify-content: center;
 align-items: center;
+-webkit-box-align: center;
+-moz-box-align: center;
+-ms-flex-align: center;
+-webkit-align-items: center;
 `;
 
 export const MainRow = styled.main`
 width: 100%;
 display: flex;
+display: -webkit-box;
+display: -moz-box;
+display: -ms-flexbox;
+display: -webkit-flex;
 flex-direction: row;
 @media (max-width: 576px) {
   flex-direction: column;
@@ -47,6 +67,10 @@ overflow-y: scroll;
   @media (max-height: 360px) {
     height: 25vh;
     display: flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
     overflow-x: scroll;
   }
 }
@@ -56,6 +80,10 @@ export const MainCol = styled.main`
 width: 100%;
 height: 100vh;
 display: flex;
+display: -webkit-box;
+display: -moz-box;
+display: -ms-flexbox;
+display: -webkit-flex;
 flex-direction: column;
 justify-content: space-between;
 @media (max-width: 576px) {

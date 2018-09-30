@@ -9,7 +9,7 @@ function PageSelectors(props) {
       display: 'flex',
       justifyContent: 'space-between',
       color: '#fff',
-      width: '90%',
+      width: '80%',
     }}
     >
       <PageSelector
