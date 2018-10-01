@@ -26,7 +26,8 @@ class App extends Component {
     this.state = {
       stockSymbols: filterStocks(symbolFilterTxt),
       filterTxt: symbolFilterTxt || '',
-      symbolIndex: symbolIndexStorage === undefined ? 5 : +symbolIndexStorage,
+      symbolIndex: symbolIndexStorage === undefined || symbolIndexStorage === null
+        ? 5 : +symbolIndexStorage,
       symbol: symbolStorage || 'AAPL',
       loading: false,
       data: {},
@@ -110,7 +111,7 @@ class App extends Component {
         await this.setState({
           loading: false,
           err: {
-            message: 'There was an error loading the data.',
+            message: 'There was an error loading the data. Please try again later.',
           },
         });
       }
@@ -119,7 +120,7 @@ class App extends Component {
         loading: false,
         err: {
           ...err,
-          alt: 'There was an error loading the data.',
+          alt: 'There was an error loading the data. Please try again later.',
         },
       });
     }
@@ -163,9 +164,7 @@ class App extends Component {
               <ErrContainer>
                 <p>
                   {err.alt ? `${err.alt} ` : ''}
-                  Error Message:
-                  {' '}
-                  {err.message}
+                  {err.message ? `Error Message: ${err.message} ` : ''}
                 </p>
               </ErrContainer>
             ) : <OhlcChart data={data} />}
